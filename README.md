@@ -1,6 +1,6 @@
 <div align="center">
   <img src="logo.jpg" alt="Plasma Frequency Profile" width="10%" />
-  <h3>Inverse Algorithm to get the plasma frequency profile</h3>
+  <h3>Inverse algorithm to get the plasma frequency profile</h3>
 
   A quasi-parabolic approach for inverting ionograms.
  
