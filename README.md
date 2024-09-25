@@ -1,7 +1,6 @@
 <div align="center">
 
-  [![Stockfish][stockfish128-logo]][website-link]
-
+  ![Alt text](https://drive.google.com/file/d/1_9t91g1ozOvQje7hYApHutA8xCBcud64/view?usp=sharing)
   <h3>Inverse Algorithm to get the plasma frequency profile</h3>
 
   A quasi-parabolic approach for inverting ionograms.
