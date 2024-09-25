@@ -1,6 +1,5 @@
 <div align="center">
 
-  ![Alt text](https://drive.google.com/file/d/1_9t91g1ozOvQje7hYApHutA8xCBcud64/view?usp=sharing)
   <h3>Inverse Algorithm to get the plasma frequency profile</h3>
 
   A quasi-parabolic approach for inverting ionograms.
@@ -14,4 +13,10 @@ The problem of inverting ionograms into plasma frequency profiles is a longstand
 There are two parts in the `.ipynb` file where we have to put our data. First, at the beginning of the file, you have to fed the program with your ionogram data, that is the frequencies in Hertz and the virtual heights in meters of your ionogram. Finally, you have to provide where is the critical frequency of the E layer.
 
 ## Some results
+<div align="center">
+![Description of the image](correct1.png)
+</div>
 
+<div align="center">
+![Description of the image](correct2.png)
+</div>
