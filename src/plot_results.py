@@ -7,6 +7,8 @@ params = {'mew': 0, 'mec': 'none', 'alpha': 0.4}
 def plot_results(ori_frq, ori_vh, fp, rh, batch_name, date, i):
     marker = 6
     plt.figure()
+    plt.xlabel('Frequency [MHz]')
+    plt.ylabel('Height [Km]')
     s_f, s_vh = get_ionogram(rh, fp, fp)
     plt.plot(fp, rh, linewidth = 3.5, label='reconstructed fp profile', color='orange',alpha=0.9)
     plt.plot(s_f, s_vh, 's', markersize = marker, label='reconstructed ionogram', mew=0.5, mec='black', mfc = 'none')
@@ -14,6 +16,7 @@ def plot_results(ori_frq, ori_vh, fp, rh, batch_name, date, i):
     plt.legend()
     plt.title(date)
     currect_directory = os.getcwd()
-    os.makedirs(currect_directory+'/results/'+batch_name, exist_ok=True)
-    plt.savefig(currect_directory + '/results/' + batch_name + '/' + str(i) + '.pdf')
+    os.makedirs(os.path.join(currect_directory, 'results', batch_name), exist_ok=True)
+    plt.savefig(os.path.join(currect_directory, 'results', batch_name, str(i) + '.png'))
+    plt.close()
     plt.close()
