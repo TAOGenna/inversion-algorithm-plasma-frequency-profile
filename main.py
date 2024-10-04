@@ -38,5 +38,7 @@ for name in filenames:
             # SOLVE F LAYER
             print_yellow('SOLVING F LAYER')
             QP = handle_f_layer(QP=QP.copy(), frq=frq, vh=vh)  
+            
+            # SAVE RESULTS
             plot_results(frq, vh, QP['plasma_frequency'], QP['real_height'], batch_name=filename_fig[:-4], date=date, i=i)
   
