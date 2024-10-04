@@ -16,7 +16,7 @@ The problem of inverting ionograms into plasma frequency profiles is a longstand
 See the documentation PDF file for details about the math and algorithms. 
 
 ## How to use
-This program expects `.SAO` files, common for sharing remote sensing data. This files should be placed in the `/sao_files/` directory. Then just run `python3 main.py` in your terminal and you will see a progress bar in your terminal when the algorithm solves for the E layer and F layer. The final image comparing results should look like the ones above.
+This program expects `.SAO` files, common for sharing remote sensing data. This files should be placed in the `/sao_files/` directory. Then just run `python3 main.py` in your terminal and you will see a progress bar in your terminal when the algorithm solves for the E layer and F layer. The `avoid_date_list.txt` is for writing down the dates that produce bad quality ionograms and we want to avoid, otherwise the program will stop. The final image comparing results should look like the ones above.
 
 <p align="center">
   <img src="images/progress_bar.png" alt="Image 3" width="95%"/>

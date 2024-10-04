@@ -15,6 +15,10 @@ subprocess.run(['bash', sh_file], check=True)
 with open('sao_files_list.txt', 'r') as file_list:
     filenames = file_list.readlines()
 
+with open('avoid_date_list.txt', 'r') as avoid_file_list:
+    avoid_dates = avoid_file_list.readlines()
+avoid_dates_set = set(avoid_dates)
+
 # Process each .SAO file 
 for name in filenames:
     filename = f'sao_files/{name.strip()}'  # Construct the full path
@@ -25,7 +29,9 @@ for name in filenames:
         frq, vh, foE = map_ionograms[date]
         frq, vh = np.array(frq), np.array(vh)
 
+        if date in avoid_dates_set: continue
         if foE is None: continue
+        
         flag_E_layer = check_E_layer_existance(frq,vh,foE)
         if flag_E_layer:
             # SOLVE E LAYER 
