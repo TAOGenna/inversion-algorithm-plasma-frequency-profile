@@ -42,4 +42,7 @@ def handle_e_layer(frq,vh,foE):
     rmE, ymE, fp_add, rh_add = find_Q0(foE=foE, probe_f=data_f, original_vh=data_hv)
     fp_add += epsilon # for numerical stability when computing ionogram
     a,b = compute_ab(fc=foE, rb=rmE-ymE, ym=ymE)
-    return a, b, rmE, fp_add, rh_add, index 
+    QP = {'plasma_frequency': fp_add, 'real_height': rh_add, 
+            'numt': index, 'a_0': a, 'r_m0': rmE, 'b_0': b,
+            'f_c0': np.sqrt(a)}
+    return QP

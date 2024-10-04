@@ -1,4 +1,5 @@
 import numpy as np
+import os
 
 def generate_values_exp(A, B, N, k):
     """
@@ -80,3 +81,17 @@ def L2_ERROR(cmp1, cmp2):
 def check_E_layer_existance(frq,vh,foE):
     index_fE = np.searchsorted(frq, foE, side='right')
     return index_fE >= 2
+
+def print_centered(text):
+    # Get the terminal width
+    terminal_width = os.get_terminal_size().columns
+    
+    # Calculate the center position
+    centered_text = text.center(terminal_width)
+    
+    # Print the text in bright green using ANSI escape codes
+    print(f'\033[1;92m{centered_text}\033[0m')  # \033[1;92m is for bright green text, \033[0m resets the color
+
+def print_yellow(text):
+    # Print the text in yellow using ANSI escape codes
+    print(f'\033[93m{text}\033[0m')  # \033[93m is for yellow text, \033[0m resets the color

@@ -11,7 +11,6 @@ def handle_f_layer(QP, frq, vh):
     """
     Computes the F layer based on the ionogram data.
     """
-    #range_numt = np.array(range(4,8))
     range_numt = np.array([1])
     # Handle special case of QP1 
     foo1 = sorted(np.array([find_QP1(original_f=frq, original_vh=vh, QP=QP.copy(), num_points=numt_max) for numt_max in range_numt]), key=lambda x: x[1])[0]
@@ -19,9 +18,7 @@ def handle_f_layer(QP, frq, vh):
    
 
     QP, error, numt_points = foo1 if foo1[1]<foo2[1] else foo2
-    tqdm.write(f'QP NUMBER = {1} | Error = {error:.4f} | numt_points = {numt_points}')
-
-    plot_results(frq, vh, QP['plasma_frequency'], QP['real_height'], filename='QP1 layer')
+    tqdm.write(f'QP NUMBER = {1:<10} | Error = {error:^15.4f} | numt_points = {numt_points:>10}')
 
     # Handle the rest of cases 
     for tmr in trange(2,10+(len(frq)-8)//4):
@@ -29,7 +26,7 @@ def handle_f_layer(QP, frq, vh):
         if error <= epsilon: continue
         numt_max = 1 if tmr<10 else 4
         QP, error, numt_points = get_qp(qp_number=tmr, QP=QP.copy(), data_f=frq, data_r=vh, numt_max=numt_max)
-        tqdm.write(f'QP NUMBER = {tmr} | Error = {error:.4f} | numt_points = {numt_points}')
+        tqdm.write(f'QP NUMBER = {tmr:<10} | Error = {error:^15.4f} | numt_points = {numt_points:>10}')
 
     return QP
 
@@ -65,12 +62,8 @@ def get_qp(qp_number, QP, data_f, data_r, numt_max):
         ai = fi ** 2   # Hz^2
         prev_real = QP['real_height'][-1] * 1e3  # m | r_i: intersection between QP_{i-1} and QP_{i}
 
-        # ai1: a_{i-1} | bi1: b_{i-1} | rmi1: r_{m,i-1}
         rmi = find_rm(ri=prev_real, a=ai, ai1=QP['a_'+str(qp_number-1)] * 1e12, bi1=QP['b_'+str(qp_number-1)] * 1e12, rmi1=QP['r_m'+str(qp_number-1)] * 1e3, tipo=qp_type)  # m
         bi  =  find_b(ri=prev_real, a=ai, ai1=QP['a_'+str(qp_number-1)] * 1e12, bi1=QP['b_'+str(qp_number-1)] * 1e12, rmi1=QP['r_m'+str(qp_number-1)] * 1e3, tipo=qp_type)  # Hz^2
-
-        #print(fi/1e6, ai/1e12, bi/1e12, rmi/1e3)
-        #print('---------------------------------------------------------')
 
         # Create a local plasma frequency profile to toy with it
         tmp_f, tmp_r = QP['plasma_frequency'] * 1e6, QP['real_height'] * 1e3
@@ -100,11 +93,7 @@ def get_qp(qp_number, QP, data_f, data_r, numt_max):
             i = str(qp_number)
             store['error'], store['a_'+i], store['b_'+i], store['r_m'+i] = L2_error, ai/1e12, bi/1e12, rmi/1e3
             store['data_r'], store['data_f'] = generated_rh/1e3, curated_data_f/1e6
-    
-    # Print some info
-    #final_error = store['error']
-    #tqdm.write(f'QP NUMBER = {qp_number} | Error = {final_error:.4f}')
-    
+
     # Update QP dictionary with the best parameters found
     i = str(qp_number)
     QP['a_' +i]  = store['a_'+i]
