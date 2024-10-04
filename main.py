@@ -21,7 +21,7 @@ subprocess.run(['bash', sh_file], check=True)
 with open('sao_files_list.txt', 'r') as file_list:
     filenames = file_list.readlines()
 
-# Process each .SAO file
+# Process each .SAO file 
 for name in filenames:
     filename = f'sao_files/{name.strip()}'  # Construct the full path
     map_ionograms, dates = Ne_prof(filename)
