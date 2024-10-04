@@ -1,4 +1,3 @@
-#from src.inversion_algorithm import InversionAlgorithm, check_E_layer_existance, plot_inversion_algorithm
 from src.handle_e_layer import handle_e_layer
 from src.handle_f_layer import handle_f_layer
 from src.plot_results import plot_results
@@ -29,11 +28,14 @@ for name in filenames:
         if foE is None: continue
         flag_E_layer = check_E_layer_existance(frq,vh,foE)
         if flag_E_layer:
+            # SOLVE E LAYER 
             print()  
             print()   
             print_centered('SOLVING FOR IONOGRAM '+date+' FROM BATCH '+name[:-4])
             print_yellow('SOLVING E LAYER')
             QP = handle_e_layer(frq=frq, vh=vh, foE=foE)
+
+            # SOLVE F LAYER
             print_yellow('SOLVING F LAYER')
             QP = handle_f_layer(QP=QP.copy(), frq=frq, vh=vh)  
             plot_results(frq, vh, QP['plasma_frequency'], QP['real_height'], batch_name=filename_fig[:-4], date=date, i=i)
