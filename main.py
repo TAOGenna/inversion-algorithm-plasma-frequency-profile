@@ -29,8 +29,8 @@ for name in filenames:
         if foE is None: continue
         flag_E_layer = check_E_layer_existance(frq,vh,foE)
         if flag_E_layer:
-            print()  # First blank line
-            print()  # Second blank line    
+            print()  
+            print()   
             print_centered('SOLVING FOR IONOGRAM '+date+' FROM BATCH '+name[:-4])
             print_yellow('SOLVING E LAYER')
             QP = handle_e_layer(frq=frq, vh=vh, foE=foE)
