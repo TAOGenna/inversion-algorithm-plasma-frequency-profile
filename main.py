@@ -1,8 +1,9 @@
-from src.inversion_algorithm import InversionAlgorithm, check_E_layer_existance, plot_inversion_algorithm
+#from src.inversion_algorithm import InversionAlgorithm, check_E_layer_existance, plot_inversion_algorithm
 from src.handle_e_layer import handle_e_layer
 from src.handle_f_layer import handle_f_layer
 from src.plot_results import plot_results
 from src.sao_reader import Ne_prof, Ne_map
+from src.utils import check_E_layer_existance
 import subprocess
 import os
 import numpy as np
@@ -30,10 +31,6 @@ for name in filenames:
         frq, vh = np.array(frq), np.array(vh)
         
         if foE is None: continue
-        # plt.figure()
-        # plt.plot(frq,vh,'o', label='original ionogram')
-        # plt.savefig('original_ionogram.png')
-        # plt.close()
         flag_E_layer = check_E_layer_existance(frq,vh,foE)
 
         if flag_E_layer:
@@ -42,9 +39,6 @@ for name in filenames:
                   'numt': index, 'a_0': aE, 'r_m0': rmE, 'b_0': bE,
                   'f_c0': np.sqrt(aE)}
             plot_results(frq, vh, QP['plasma_frequency'], QP['real_height'], filename='cmp E layer')
-            #print('------------------------------------------------------------------------')
-            #print(QP)
-            #print('------------------------------------------------------------------------')
             print('FINISHED E LAYER, STARTING F LAYER')
             QP = handle_f_layer(QP=QP.copy(), frq=frq, vh=vh)
             

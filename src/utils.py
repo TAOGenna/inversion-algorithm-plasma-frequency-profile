@@ -76,3 +76,7 @@ def L2_ERROR(cmp1, cmp2):
     difference = abs(cmp1 - cmp2)
     errors = np.array([difference])
     return np.sqrt(np.sum(errors**2)) / len(errors)
+
+def check_E_layer_existance(frq,vh,foE):
+    index_fE = np.searchsorted(frq, foE, side='right')
+    return index_fE >= 2

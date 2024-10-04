@@ -43,27 +43,3 @@ def handle_e_layer(frq,vh,foE):
     fp_add += epsilon # for numerical stability when computing ionogram
     a,b = compute_ab(fc=foE, rb=rmE-ymE, ym=ymE)
     return a, b, rmE, fp_add, rh_add, index 
-    
-    #print('foE = ',foE, '   and data_f[-1] = ', data_f[-1])
-    # # some vizualizations -------------------------------------------------
-    # plt.figure()
-    # plt.plot(frq,vh,'o',color='blue',label='original',alpha=0.2)
-    # plt.plot(data_f,data_hv,'o',color='red',alpha=0.4, label='only E layer')
-    # plt.legend()
-    # plt.savefig('handeling E layer.png')
-    # plt.close()
-    # #-----------------------------------------------------------------------
-    # print('--------------------------------------------------------------')
-    # # some visualizations ----------------------------------------------------
-    # plt.figure()
-    # plt.plot(data_f,data_hv,color='red', label='original only E layer')
-    # plt.plot(fp_add, rh_add, 'o', label='reconstructed fp profile')
-    
-    # tmr_f, tmr_hv = get_ionogram(rh_add, fp_add, fp_add)
-    # tmr_f2, tmr_hv2 = get_ionogram(rh_add, fp_add, data_f)
-    # plt.plot(tmr_f, tmr_hv, '^', alpha=0.3, label='reconstructed ionogram')
-    # plt.plot(tmr_f2, tmr_hv2, 's', alpha=0.3, label='reconstructed ionogram | selected points')
-    # plt.legend()
-    # plt.savefig('after processing E layer.png')
-    # plt.close()
-    # #--------------------------------------------------------------------------

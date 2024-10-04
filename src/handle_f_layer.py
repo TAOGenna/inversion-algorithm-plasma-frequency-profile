@@ -11,19 +11,26 @@ def handle_f_layer(QP, frq, vh):
     """
     Computes the F layer based on the ionogram data.
     """
-    numt_max = 3
-    print(f'AMOUNT OF POINTS PER QP = {numt_max}')
-
+    #range_numt = np.array(range(4,8))
+    range_numt = np.array([1])
     # Handle special case of QP1 
-    tmp1_QP, error1 = find_QP1(original_f=frq, original_vh=vh, QP=QP.copy(), num_points=numt_max)
-    tmp2_QP, error2 = get_qp(qp_number = 1, QP=QP.copy(), data_f=frq, data_r=vh, numt_max=numt_max)
-    QP = tmp1_QP if error1<error2 else tmp2_QP
+    foo1 = sorted(np.array([find_QP1(original_f=frq, original_vh=vh, QP=QP.copy(), num_points=numt_max) for numt_max in range_numt]), key=lambda x: x[1])[0]
+    foo2 = sorted(np.array([get_qp(qp_number = 1, QP=QP.copy(), data_f=frq, data_r=vh, numt_max=numt_max) for numt_max in range_numt]), key=lambda x: x[1])[0]
+   
+
+    QP, error, numt_points = foo1 if foo1[1]<foo2[1] else foo2
+    tqdm.write(f'QP NUMBER = {1} | Error = {error:.4f} | numt_points = {numt_points}')
+
     plot_results(frq, vh, QP['plasma_frequency'], QP['real_height'], filename='QP1 layer')
 
     # Handle the rest of cases 
-    for tmr in trange(2,30):
-        QP, _ = get_qp(qp_number=tmr, QP=QP.copy(), data_f=frq, data_r=vh, numt_max=numt_max)
-    
+    for tmr in trange(2,10+(len(frq)-8)//4):
+        epsilon = 1e-10
+        if error <= epsilon: continue
+        numt_max = 1 if tmr<10 else 4
+        QP, error, numt_points = get_qp(qp_number=tmr, QP=QP.copy(), data_f=frq, data_r=vh, numt_max=numt_max)
+        tqdm.write(f'QP NUMBER = {tmr} | Error = {error:.4f} | numt_points = {numt_points}')
+
     return QP
 
 # 
@@ -34,7 +41,7 @@ def get_qp(qp_number, QP, data_f, data_r, numt_max):
     if numt >= len(data_f): return QP
 
     # Set a lowerbound and upperbound depending on if it is a QP or anti-QP layer
-    search_length = 100
+    search_length = 1000
     fc_lowerbound, fc_upperbound, qp_type = None, None, None
     epsilon = 1e-10
 
@@ -95,8 +102,8 @@ def get_qp(qp_number, QP, data_f, data_r, numt_max):
             store['data_r'], store['data_f'] = generated_rh/1e3, curated_data_f/1e6
     
     # Print some info
-    final_error = store['error']
-    tqdm.write(f'QP NUMBER = {qp_number} | Error = {final_error:.4f}')
+    #final_error = store['error']
+    #tqdm.write(f'QP NUMBER = {qp_number} | Error = {final_error:.4f}')
     
     # Update QP dictionary with the best parameters found
     i = str(qp_number)
@@ -107,5 +114,5 @@ def get_qp(qp_number, QP, data_f, data_r, numt_max):
     QP['numt']   = QP['numt'] + numt_max
     QP['plasma_frequency'] = np.append(QP['plasma_frequency'], store['data_f'])
     QP['real_height'] = np.append(QP['real_height'], store['data_r'])
-    return QP, store['error']
+    return QP, store['error'], numt_max
 

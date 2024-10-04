@@ -16,7 +16,7 @@ def find_QP1(original_f, original_vh, QP, num_points):
     fp, rh = QP['plasma_frequency'], QP['real_height']
 
     epsilon = 1e-10
-    numt = QP['numt']-1
+    numt = QP['numt']
     tmp_probe = original_f[numt:numt+num_points]
 
     for ym in possible_ym:
@@ -48,5 +48,4 @@ def find_QP1(original_f, original_vh, QP, num_points):
     QP['b_1']  = process['b']
     QP['numt'] = process['numt']
     QP['plasma_frequency'], QP['real_height'] = (process['fp'], process['rh'])
-    print('QP NUMBER = 1 | SPECIAL FUNCTION GETS ERROR = ', process['error'])
-    return QP, process['error']
+    return QP, process['error'], num_points
