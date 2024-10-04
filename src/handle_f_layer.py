@@ -26,7 +26,7 @@ def handle_f_layer(QP, frq, vh):
     
     return QP
 
-
+# 
 def get_qp(qp_number, QP, data_f, data_r, numt_max):
 
     # Check if we already have enough points
