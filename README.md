@@ -16,4 +16,13 @@ The problem of inverting ionograms into plasma frequency profiles is a longstand
 See the documentation PDF file for details about the math and algorithms. 
 
 ## How to use
-This program expects `.SAO` files, common for sharing remote sensing data. This files should be placed in the `sao_files` directory. Then just run `python3 main.py` in your terminal and you will see a progress bar in your terminal when the algorithm solves for the E layer and F layer. The final image comparing results should look like the ones above.
+This program expects `.SAO` files, common for sharing remote sensing data. This files should be placed in the `/sao_files/` directory. Then just run `python3 main.py` in your terminal and you will see a progress bar in your terminal when the algorithm solves for the E layer and F layer. The final image comparing results should look like the ones above.
+
+<p align="center">
+  <img src="progress_bar.png" alt="Image 3" width="95%"/>
+</p>
+
+## References
+*The first paper has a lot of errors, but the underlying idea is correct. 
+- L. Niu, L. Wen, C. Zhou, and M. Deng, ”A profile inversion method for vertical ionograms,” AIP Advances, vol. 14, no.6, p. 065034, Jun. 2024. doi: `10.1063/5.0208687`.
+- J.E. Titheridge, ”A new method for the analysis of ionospheric h’(ƒ) records,” Journal of Atmospheric and Terrestrial Physics, vol. 21, no. 1, pp. 1-12, 1961. doi: `10.1016/0021-9169(61)90185-4`.
