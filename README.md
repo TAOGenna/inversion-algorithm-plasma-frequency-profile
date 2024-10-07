@@ -11,13 +11,12 @@
 </p>
 
 ## Overview
-The problem of inverting ionograms into plasma frequency profiles is a longstanding problem with some known approaches. Most of them are closed software written on some antique language. This project is a Python implementation of an inversion algorithm based on quasi-parabolic layers. By alternating between these we are able the construct a smooth curve for the plasma frequency profile while fitting with an least squares error the produced vs the original ionogram.
+The inversion of ionograms into plasma frequency profiles is a longstanding problem, with several established approaches. However, most of these are implemented in closed software, often written in outdated programming languages. This project presents a Python implementation of an inversion algorithm based on quasi-parabolic layers. By alternating between these layers, we can construct a smooth plasma frequency profile while minimizing the least squares error between the generated and the original ionogram.
 
-See the documentation PDF file for details about the math and algorithms. 
+Refer to the accompanying PDF documentation for detailed information on the mathematics and algorithms used.
 
 ## How to use
-This program expects `.SAO` files, common for sharing remote sensing data. This files should be placed in the `/sao_files/` directory. Then just run `python3 main.py` in your terminal and you will see a progress bar in your terminal when the algorithm solves for the E layer and F layer. The `avoid_date_list.txt` is for writing down the dates that produce bad quality ionograms and we want to avoid, otherwise the program will stop. The final image comparing results should look like the ones above.
-
+This program expects `.SAO` files, which are commonly used for sharing remote sensing data. These files should be placed in the `/sao_files/` directory. To run the program, simply execute `python3 main.py` in your terminal. As the algorithm solves for the E and F layers, you will see a progress bar. The `avoid_date_list.txt` file lists dates with poor-quality ionograms that should be avoided; otherwise, the program will stop. The final image comparing the results should resemble the examples shown above.
 <p align="center">
   <img src="images/progress_bar.png" alt="Image 3" width="95%"/>
 </p>
