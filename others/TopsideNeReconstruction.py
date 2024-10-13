@@ -1,7 +1,7 @@
 """
 - self consistent method to compute the coefficients Ai for the inversion problem
 - We concentrate on the O trace so f'k = fk and there is no iteration procedure,
-  instead just compute the Chebyshev coefficients once
+  instead just compute the Chebyshev coefficients once.
 """
 RED = "\033[31m"
 GREEN = "\033[92m"
