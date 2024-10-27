@@ -13,6 +13,8 @@ Refer to the accompanying <a href="Documentation.pdf">PDF documentation</a> for 
 ## Results
 We used data provided by the Jicamarca Radio Observatory located in Lima, Peru. The data is a .SAO file thus providing all the information of the iongram such as the E and F layer critical frequency and the o-mode trace. We find that the program works for ionograms with E and F layer or daytime ionograms.
 
+On top of predicting the electron density profile or, as well known as plasma frequency profile, we can predict the complete form of the E layer which is usually incomplete in the ionograms. 
+
 <p align="center">
   <img src="images/90.png" alt="Image 1" width="300px"/>
   <img src="images/92.png" alt="Image 2" width="300px"/>
