@@ -1,0 +1,365 @@
+
+\documentclass[aps,twocolumn,prb,showpacs,superscriptaddress]{revtex4-2}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{makeidx}
+\usepackage{amsfonts}
+\usepackage{graphics}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{hyperref}
+
+\setcounter{MaxMatrixCols}{10}
+%TCIDATA{OutputFilter=LATEX.DLL}
+%TCIDATA{Version=5.50.0.2953}
+%TCIDATA{<META NAME="SaveForMode" CONTENT="1">}
+%TCIDATA{BibliographyScheme=Manual}
+%TCIDATA{LastRevised=Saturday, July 17, 2021 20:30:39}
+%TCIDATA{<META NAME="GraphicsSave" CONTENT="32">}
+
+\newcommand{\up}{\uparrow}
+\newcommand{\dw}{\downarrow}
+\newcommand{\+}{\dagger}
+
+
+\begin{document}
+
+\title{A note on an inversion algorithm for vertical ionograms for the prediction of plasma frequency profiles}
+
+\author{R. Kenyi Takagui-Perez}
+\affiliation{Pontifical Catholic University of Peru}
+
+% \author{A. A. Aligia}
+% \affiliation{Instituto de Nanociencia y Nanotecnolog\'{\i}a 
+% CNEA-CONICET, GAIDI,
+% Centro At\'{o}mico Bariloche and Instituto Balseiro, 8400 Bariloche, Argentina}
+
+\begin{abstract}
+    A recent article [AIP Advances 14, 065034 (2024)] \cite{niu2024}
+    claims to have developed a quasi-parabolic
+    inspired approach to find the plasma frequency profile from a given ionogram. The authors claim
+    their algorithm fits the desired ionogram by producing an artificial plasma frequency profile. We
+    find the paper’s results rather dubious because of the mathematical treatment and numerical values presented.
+    However, considering the potential of the underlying idea, we present a much clearer exposition of a
+    multi-quasi-parabolic construction of a plasma frequency profile for the E and F layers given a daylight ionogram. A parabolic profile is assumed for the E layer and the F layer is approximated by a series of concatenated quasiparabolic layers where the continuity of the curve is preserved by assuming a common point between consecutive quasi-parabolic layers where the derivative is the same. The inversion algorithm was applied to daylight ionograms from the Jicamarca Observatory in Lima showing good agreement between the produced synthetic ionogram, calculated from our predicted plasma frequency profile, and the original measured ionogram. 
+    
+\end{abstract}
+
+%\pacs{74.78.Na, 74.45.+c, 73.21.Hb}
+\maketitle
+
+
+
+%74.78.Na Mesoscopic and nanoscale systems
+%74.45.+c Proximity effects; Andreev effect; SN and SNS junctions
+%73.21.Hb Quantum wires
+
+\section{Introduction}
+
+\label{intro}
+
+
+Most of our knowledge about the ionosphere comes from ionogram records. These $h'(f)$ records give the apparent or virtual heights of reflection $h'(f)$ of a vertically transmitted radio wave, as a function of the wave frequency $f$. This paper aims to retrieve the electronic density profile from measured ionograms.
+
+The analysis of ionograms consists basically of converting an observed $h'(f)$ curve, which gives the virtual height of reflection $h'$ as a function of the wave frequency $f$, into an $N(h)$ curve giving the variation of the electron density $N$ with height $h$. These two curves are related by
+\begin{equation}
+h'(f) = \int_0^{h_r} \mu' \, dh,
+\label{eq:first}
+\end{equation}
+where the group refractive index $\mu'$ is a complicated function of $f$, $N$, and the strength and direction of the magnetic field. The height of reflection, $h_r$ for the frequency $f$ depends on $f$, $N$, and (for the extraordinary rays only) the strength of the magnetic field.
+
+Previous efforts in solving this ill-posed problem include lamination techniques \cite{reilly1989}, least-squares polynomial analysis approximation \cite{reinisch1983,titheridge1967}, and ray tracing \cite{manjrekar2023}. There is no analytic solution of (1), i.e. giving $N(h)$ in terms of $h'(f)$. The lamination technique method consisted in assuming various $N(h)$ model curves, pass them through a forward model to produce its corresponding ionogram, and finally compare the produced $h'(f)$ curves with those observed experimentally. Budden et al. \cite{budden1955} suggested an $N(h)$ model consisting of a large number of linear segments, the integral in Eq. (\ref{eq:first}) can then be replaced by a finite sum and the height increments of the successive segments are determined from the virtual heights of the waves reflected at the ends of the segments. This gives the "lamination" method of analysis which is widely used at present. It gives good accuracy when a large number of segments are used, but the calculations then become rather lengthy, and a computer is generally employed. On the other hand, Reinisch et al. used Chebyshev polynomial methods to approximate the F layer to obtain a more efficient process for the analysis of ionograms. However their program is a closed software which makes it hard to replicate and improve. More recently Ankita et al. proposed another method using electromagnetic wave propation simulations using Hamiltonians for ray tracing.
+
+In the present notes, we improve upon the ideas given in the Niu et al. \cite{niu2024} study where they used multivariate-quasi-parabolic layers to create an inversion model algorithm to approximate the E and F layer plasma frequency profile. Several mathematical erros in their equations make the reading quite hard to follow. In this paper, we offer and more tractable description of what they trying to do. These notes are meant to be pedagogical; most computations are performed in detail. In addition, we are open sourcing the code for this research as is hard to find a non closed software option for the inversion of ionograms. 
+
+The parabolic model of the ionosphere was introduced by Forsterling and Lassen \cite{forsterling1931}. As implied by the name, the model is defined by the equation of a parabola in the electron density versus height plane. In the notation which is most convenient for our purposes, the parabolic layer is
+\begin{equation}
+N_e = 
+\begin{cases}
+N_m \left[ 1 - \left( \frac{r - r_m}{y_m} \right)^2 \right], & r_b < r < r_m + y_m \\
+0, & \text{elsewhere}
+\end{cases}
+\end{equation}
+where:
+\begin{itemize}
+    \item $N_e$ = electron density, having maximum value $N_m$
+    \item $r$ = radial distance from earth center (height + earth radius)
+    \item $r_m$ = value of $r$ where $N_e = N_m (h_m + \text{earth radius})$
+    \item $r_b$ = value of $r$ at the layer base $= r_m - y_m$
+    \item $y_m$ = layer semithickness
+\end{itemize}
+
+A very slight modification to the parabolic model permits the derivation of exact equations for ray-path parameters. This modified parabolic ionosphere will be termed the "quasi-parabolic" or, more simply, the "QP" model.
+
+\section{Data}
+
+We assume we have the autoscaled ionogram virtual heights for frequencies $f_i \in [0, f_F ]$ with arbitrary strides between frequency points, and also the frequency position of the E layer
+critical frequency $f_E$. Big gaps between frequency data points may cause undesired behaviour in the algorithm.
+
+\section{Model: QP layers}
+We make a QP layer the basic unit that will be used to model split sections of the F layer and the entirety of the E layer. We define a QP layer as
+
+\begin{equation}
+f_{ni}^2 = f_{ci}^2 \left[ 1 \pm \left( \frac{r - r_{mi}}{y_{mi}} \right)^2 \left( \frac{b_i}{r} \right)^2 \right]
+\label{eq:qp_eq}
+\end{equation}
+
+It can also be written as
+
+\begin{equation}
+y_i = f_{ni}^2 = a_i \pm b_i \left( 1 - \frac{r_{mi}}{r} \right)^2
+\label{eq:QP_other_form}
+\end{equation}
+
+where $y_i = f_{ni}^2$, $a_i = f_{ci}^2$, and $b_i = a_i \left( \frac{b_i}{y_{mi}} \right)^2$. There will be two kinds of QP layers: $QP_i^+$ and $QP_i^-$. Therefore they will be represented by equations $y_i^+$ and $y_i^-$, correspondingly. Each QP layer is parameterized by three numbers: $a_i$, $b_i$, and $r_{mi}$. See Fig \ref{fig:cute}.
+
+\begin{figure}[hb]
+    \begin{center}
+    \includegraphics*[width=0.90\columnwidth]{images/cute_description.jpg}
+    \end{center}
+    \caption{(Color online) Description of what the concatenation of QP layers aims to build. The dotted black line would be the plasma frequency profile.}
+    \label{fig:cute}
+\end{figure}
+The way we use Eq. (\ref{eq:qp_eq}) to find the real heights, is solving the equation for a given frequency. That is, per QP layer, we select a bunch of plasma frequency points and solve the equation getting their corresponding real heights.  
+
+\subsection{E layer}
+
+It is well known that the E-layer virtual heights per frequency $f$ can be modeled as
+
+\begin{equation}
+h'(f) = r_b + \frac{1}{2} y_m \frac{f}{f_E} \ln \left( \frac{f_E + f}{f_E - f} \right)
+\label{eq:e_layer}
+\end{equation}
+
+Where $r_b$ is the height where the ionogram starts. In the case of E layers, we usually don't have the complete trace so it is necessary to search for $r_b$ and $y_m$ values. If we were to use a QP model for the E layer instead of Eq. (\ref{eq:e_layer}), we would still need to compute the same values since we already know $f_E$. We use a brute-force approach to find the best parameters for the E-layer using a simple two for-loop. Per pair $(r_{bE}, y_{mE})$ we compare the produced virtual heights $h'(f)$ with the Eq. (\ref{eq:e_layer}) versus the original ionogram. If we choose to use a QP model, we produce the virtual heights via a forward model which will be explained later. Finally, the probe pair with the smallest error difference is the one we take. The metric used for measuring the error we use is the root-mean-squared error.
+
+Because the E layer presents a pronounced steep, we consider a probe frequency points that are not evenly distributed in, say, a range $[A,B]$, but more densily distributed near the upper bound $B$. We use the following equation to obtain a suitable distribution of values
+\begin{equation}
+    x_i = A + (B - A) \frac{1 - \exp\left(-k \frac{i}{N}\right)}{1 - \exp(-k)}.
+\end{equation}  
+
+\subsection{QP layers concatenation for F layer reconstruction}
+Next, we approximate the F layer by concatenating several $QP$ layers by alternating between $QP^-$ to $QP^+$ and $QP^+$ to $QP^-$ layers. We start the F layer with a $QP^+$ layer. We ensure the continuity of the plasma frequency profile between $QP_i$ and $QP_{i-1}$ by making its derivatives equal at $r_i$, the real height corresponding to last frequency point we considered in the $QP_{i-1}$ layer. See Fig. \ref{fig:cute}.
+
+\begin{equation}
+\left. \frac{dy_i^\pm}{dr} \right|_{r=r_i} = \left. \frac{dy_{i-1}^\mp}{dr} \right|_{r=r_i} \quad \text{or} \quad \left. \frac{dy_i^\mp}{dr} \right|_{r=r_i} = \left. \frac{dy_{i-1}^\pm}{dr} \right|_{r=r_i},
+\end{equation}
+
+From these relations we can get expressions for $b_i$ and $r_{mi}$, dependent on $a_i$ and the parameters of the $QP_{i-1}$ layer. See Eq. (\ref{eq:QP_other_form})
+
+Let us compute the derivatives for the different types of $QP$ layers. For $y_i^-$
+
+\begin{equation}
+y_i^-(r) = a_i - b_i \left( 1 - \frac{r_{mi}}{r} \right)^2
+\end{equation}
+
+its corresponding derivative is
+
+\begin{equation}
+y_i^{-}(r)' = -\frac{2b_i r_{mi}}{r^2} \left( 1 - \frac{r_{mi}}{r} \right)
+\end{equation}
+
+On the other hand, for $y^+$
+
+\begin{equation}
+y_i^+(r) = a_i + b_i \left( 1 - \frac{r_{mi}}{r} \right)^2
+\end{equation}
+
+its derivative is
+
+\begin{equation}
+y_i^{+}(r)' = \frac{2b_i r_{mi}}{r^2} \left( 1 - \frac{r_{mi}}{r} \right)
+\end{equation}
+
+Then, as we mentioned, there will be two cases: $QP^- \text{ to } QP^+$ or $QP^+ \text{ to } QP^-$. First, for the case of $QP_{i-1}^-$ to $QP_i^+$, to find the dependence of parameters $b_i$ and $r_{mi}$ with the ones of $QP_{i-1}$ and ensure the continuity of the curve, we equate $y_{i-1}^{-}(r_i)' = y_i^{+}(r_i)'$. $r_i$ is the point where both curves meet, computationally speaking $r_i$ is the last point we took from the curve $QP_{i-1}^-$. We find
+
+\begin{equation}
+r_{mi} = \frac{r_i^2 y_{i-1}^{-}(r_i)'}{2(y_{i-1}(r_i) - a_i) + r_i y_{i-1}^{-}(r_i)'}
+\end{equation}
+
+\begin{equation}
+b_i = \frac{\left[ 2(y_{i-1}(r_i) - a_i) + r_i y_{i-1}^{-}(r_i)' \right]^2}{4(y_{i-1}(r_i) - a_i)}
+\end{equation}
+
+Finally, for the case of $QP_{i-1}^+$ to $QP_i^-$, we equate
+
+\begin{equation}
+y_{i-1}^{+}(r_i)' = y_i^{-}(r_i)'.
+\end{equation}
+
+\begin{equation}
+r_{mi} = \frac{r_i^2 y_{i-1}^{+}(r_i)'}{2(y_{i-1}^+(r_i) - a_i) + r_i y_{i-1}^{+}(r_i)'}
+\end{equation}
+
+\begin{equation}
+b_i = -\frac{\left[ 2(y_{i-1}^+(r_i) - a_i) + r_i y_{i-1}^{+}(r_i)' \right]^2}{4(y_{i-1}^+(r_i) - a_i)}
+\end{equation}
+
+\section{Algorithm}
+The general idea is that for each $QP$ layer we will try different values of $f_{ci}$, each giving a its own set of parameters, which at the same time depend on values computed in the previous $QP_{i-1}$. Next, for each $f_{ci}$, we use a batch of $N$ plasma frequency points for which we calculate their real heights and subsequently their virtual heights using the forward model. We compare them against the measured virtual heights and keep the batch with the least error. Finally, we append the best one and move on onto the next layer. 
+
+A more detailed explanation is as follows: the algorithm starts with the calculation of the E-layer, also known as $QP^-_0$ layer. Then, we can iteratively compute the next $QP_i$ parameters since we already know the ones from the $QP_{i-1}$ layer meaning $r_{mi}$ and $b_i$ will be left as a function of $a_i = f_{ci}^2$. To find $f_{ci}$, we use an exhaustive search algorithm, which means trying several values of $f_{ci}$ by brute force. If the $QP_i$ layer is a $QP^+$ layer, we will search $f_{ci}$ in the range $[f_L + \epsilon, f_L + 2.0]$, and, if, on the other hand, we are computing a $QP^-$ layer, the range will be $[f_L - 2.0, f_L - \epsilon]$. For each of these $f_{ci}$ values, we take a batch of $N$ plasma frequency points including $f_{ci}$ and compute their real and virtual heights with the help of the forward mode and compare them against the real measurements from the ionogram. The batch producing the least error is attached to our \texttt{fp profile} array. Once we are done with the $QP_i$ layer, we consider the last element of the \texttt{fp profile} to be the intersection point between the $QP_i$ and $QP_{i+1}$ layers. Finally, we repeat the process. The number of $QP$ layers should be defined beforehand.
+
+\section{Forward Model}
+Each time we add new plasma frequency and real height data points to our plasma frequency profile curve, we need to test it against the original ionogram and calculate the error. To achieve this we need a forward model that can calculate an ionogram given a plasma frequency profile.
+
+\begin{figure}[t]
+    \begin{center}
+    \includegraphics*[width=0.70\columnwidth]{images/grafiquito.jpg}
+    \end{center}
+    \caption{Close up to the $n(z)^2$ function.}
+    \label{fig:grafiquito}
+\end{figure}
+
+Another way to express the ionospheric virtual height reflection is
+\begin{equation}
+h(f) = \int_0^{z_r} \frac{dz}{n(z)}
+\label{eq:virtual_height}
+\end{equation}
+and by looking at the expression of \(n(z) = \sqrt{1 - \frac{f_p(z)^2}{f^2}}\), plus the condition that \(f_p(z_r) = f\), we can foresee that the curve of \(n(z)^2\) will look like an inverse function beginning in the coordinate \((0, 1)\) and then converging towards \(n(z)^2 = 0\) at \(z = z_r\). If we zoom in on a curve segment, the ending points would be like the ones in Fig. \ref{fig:grafiquito}. Using triangle relations we get
+\begin{equation}
+\frac{z_{i+1} - z_i}{n^2(z_i) - n^2(z_{i+1})} = \frac{z - z_i}{n^2(z_i) - n^2(z)}
+\end{equation}
+
+where \(n(z)\) can be extracted from this equation
+\begin{equation}
+n^2(z) = n^2(z_i) - (z - z_i) \left[\frac{n^2(z_i) - n^2(z_{i+1})}{z_{i+1} - z_i}\right]
+\end{equation}
+
+and replace it in Eq. \ref{eq:virtual_height}. Because the integrand is an inverse function the biggest contributions will come from the segment with \(z_i\) value closer to \(z_r\). If we treat the integral from Eq. \ref{eq:virtual_height} by parts (imagine our line of integration is formed by \(N\) points), then there will be two different contributions, one coming from the last segment \((z_1, z_r)\) and another from \((z_0, z_1)\).
+\begin{equation}
+h(f) = \int_{z_1}^{z_r} \frac{dz}{n(z)} + \int_0^{z_1} \frac{dz}{n(z)}
+\label{eq:two_integrals}
+\end{equation}
+
+First, we deal with the latter.
+\begin{equation}
+    \begin{split}
+        &= \sum_{i=0}^{N-2} \int_{z_i}^{z_{i+1}} \frac{dz}{n(z)}\\
+        &= \sum_{i=0}^{N-2} \int_{z_i}^{z_{i+1}} \frac{1}{\sqrt{n^2(z_i) - (z - z_i) \left[\frac{n^2(z_i) - n^2(z_{i+1})}{z_{i+1} - z_i}\right]}} \, dz
+    \end{split}
+\end{equation}
+
+Doing a change of variables \(z' = z - z_i\) we are left with
+\begin{equation}
+    \begin{split}
+        &= \int_0^{z_1} \frac{dz}{n(z)}\\
+        &= \sum_{i=0}^{N-2} \int_0^{z_{i+1} - z_i} \frac{1}{\sqrt{n^2(z_i) - z' \left[\frac{n^2(z_i) - n^2(z_{i+1})}{z_{i+1} - z_i}\right]}} \, dz',
+    \end{split}
+\end{equation}
+
+Then using the result \(\int \frac{1}{\sqrt{a - b x}} dx = -\frac{2\sqrt{a - b x}}{b} + C\) to calculate the integral analytically
+\begin{equation}
+\begin{split}
+    \int_0^{z_1} \frac{dz}{n(z)} &= \sum_{i=0}^{N-2} \frac{2 (z_{i+1} - z_i)}{\sqrt{n^2(z_i)} + \sqrt{n^2(z_{i+1})}}\\
+    &= \sum_{i=0}^{N-2} \frac{2 \Delta z}{n(z_i) + n(z_{i+1})}
+\end{split}
+\end{equation}
+
+Secondly, we deal with the first integral in Eq. (\ref{eq:two_integrals}). As the upper limit for the integral is $z_r$, we need to remember that $n(z = z_r) = 0$, then because of 
+\(
+z_r = \frac{n^2(z_i)}{n^2(z_i) - n^2(z_{i+1})} (z_{i+1} - z_i) + z_i
+\)
+the integral will be
+\begin{equation}
+n^2(z_i) \int_0^{\frac{z_{i+1} - z_i}{n^2(z_i) - n^2(z_{i+1})}} \frac{dz}{n(z')}
+\end{equation}
+already applied the change of variables. The result is
+\begin{equation}
+\int_{z_i}^{z_r} \frac{dz}{n(z)} = 2n(z_i) \frac{(z_{i+1} - z_i)}{n^2(z_i) - n^2(z_{i+1})}
+\end{equation}
+with $z_i = z_{N-1}$ and $z_{i+1} = z_N$. Then, by calculating both analytically both integrals we can get an accurate value for the virtual height given a plasma frequency profile.
+
+\section{Results}
+To test our inverse algorithm and forward model, we used data measured in the Jicamarca Observatory in Lima, Peru. We concentrate in daylight ionograms as they present some data points for the E layer. We do not support ionograms with only the F layer present.
+
+The original measured ionograms will be represented by magenta dots, the reconstructed plasma frequency profile in a yellow solid line, and the calculated synthetic ionogram from the reconstructed plasma frequency profile will be represented by empty black squares. For the sake of brevity, we present results with an hour of difference during daylight.
+
+Even though the final reconstructed ionogram does not perfectly fit the original one, see Fig. \ref{fig:09} , in general shows good agreement, see Figs. \ref{fig:04} \ref{fig:05} \ref{fig:06} \ref{fig:08}. But more importantly, the results give us a good idea of what the plasma frequency or electron density profile look like.
+
+To obtain this results, we usually computed between $25$ to $30$ $QP$ layers with $4$ data points per layer. However, to stabilize the virtual heights of the first produced synthetic ionogram data points in the F layer, we used a single data point for the first $10$ $QP$ layers. Additionally, our algorithm is able to complete the missing data points in the E layer, see for example Fig. \ref{fig:09}.
+
+The open-source code and data used for this research can be found in Github repository \href{https://github.com/TAOGenna/inversion-algorithm-plasma-frequency-profile}{\underline{InversionAlgorithm}}.
+\begin{figure*}[htbp]
+    \begin{center}
+    \includegraphics*[width=0.90\columnwidth]{images/79.png}
+    \end{center}
+    \caption{}
+    \label{fig:03}
+\end{figure*}
+
+\begin{figure*}[htbp]
+    \begin{center}
+    \includegraphics*[width=0.90\columnwidth]{images/91.png}
+    \end{center}
+    \caption{}
+    \label{fig:04}
+\end{figure*}
+
+\begin{figure*}[htbp]
+    \begin{center}
+    \includegraphics*[width=0.90\columnwidth]{images/103.png}
+    \end{center}
+    \caption{}
+    \label{fig:05}
+\end{figure*}
+
+\begin{figure*}[htbp]
+    \begin{center}
+    \includegraphics*[width=0.90\columnwidth]{images/115.png}
+    \end{center}
+    \caption{}
+    \label{fig:06}
+\end{figure*}
+
+\begin{figure*}[htbp]
+    \begin{center}
+    \includegraphics*[width=0.90\columnwidth]{images/126.png}
+    \end{center}
+    \caption{}
+    \label{fig:07}
+\end{figure*}
+
+\begin{figure*}[htbp]
+    \begin{center}
+    \includegraphics*[width=0.90\columnwidth]{images/140.png}
+    \end{center}
+    \caption{}
+    \label{fig:08}
+\end{figure*}
+
+\begin{figure*}[htbp]
+    \begin{center}
+    \includegraphics*[width=0.90\columnwidth]{images/148.png}
+    \end{center}
+    \caption{}
+    \label{fig:09}
+\end{figure*}
+
+\section*{Acknowledgments}
+R. K. T. P. acknowledges the financial support by the Radio Astronomy Institute of the Pontificia Catolica Universidad del Peru and Prof. Marco
+Milla for useful comments and discussions.
+
+\begin{thebibliography}{99}
+
+    \bibitem{niu2024} L. Niu, L. Wen, C. Zhou, and M. Deng, "A profile inversion method for vertical ionograms," \textit{AIP Advances}, vol. 14, no. 6, p. 065034, Jun. 2024. doi: 10.1063/5.0208687.
+    
+    \bibitem{titheridge1961} J. E. Titheridge, "A new method for the analysis of ionospheric h'(f) records," \textit{Journal of Atmospheric and Terrestrial Physics}, vol. 21, no. 1, pp. 1-12, 1961. doi: 10.1016/0021-9169(61)90185-4.
+    
+    \bibitem{reinisch1983} B. W. Reinisch and X. Huang, "Automatic calculation of electron density profiles from digital ionograms: 3. Processing of bottomside ionograms," \textit{Radio Science}, vol. 18, no. 3, pp. 477-492, 1983. doi: 10.1029/RS018i003p00477.
+    
+    \bibitem{reilly1989} M. H. Reilly and J. D. Kolesar, "A method for real height analysis of oblique ionograms," \textit{Radio Science}, vol. 24, no. 04, pp. 575-583, 1989. doi: 10.1029/RS024i004p00575.
+    
+    \bibitem{titheridge1967} J. E. Titheridge, "Direct Manual Calculations of Ionospheric Parameters Using a Single-Polynomial Analysis," \textit{Radio Science}, vol. 2, no. 10, pp. 1237-1253, 1967. doi: https://doi.org/10.1002/rds19672101237.
+    
+    \bibitem{manjrekar2023} A. Manjrekar and S. Tulasiram, "Iterative Gradient Correction (IGC) Method for True Height Analysis of Ionograms," \textit{Radio Science}, vol. 58, Nov. 2023. doi: 10.1029/2023RS007808.
+    
+    \bibitem{budden1955} K. G. Budden, "The Numerical Solution of the Differential Equations Governing the Reflexion of Long Radio Waves from the Ionosphere. II," \textit{Philosophical Transactions of the Royal Society of London. Series A, Mathematical and Physical Sciences}, vol. 248, no. 939, pp. 45-72, 1955. [Online]. Available: http://www.jstor.org/stable/91622.
+    
+    \bibitem{forsterling1931} V. K. Forsterling and H. Lassen, "Die Ionisation der Atmosphäre und die Ausbreitung der kurzen elektrischen Wellen (IQ-100 m) über die Erde. III," \textit{Zeitschrift für technische Physik}, vol. 12, pp. 502-527, 1931.
+    
+\end{thebibliography}
+    
+
+\end{document}
