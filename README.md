@@ -7,9 +7,15 @@
 </div>
 
 ## Abstract
-Inversion of ionograms from vertical measurements is significant for studying the ionospheric structure and ionospheric wave propagation, and it has attracted widespread attention. A model inversion algorithm based on the multivariate QP model (single quasi-parabolic ionospheric profile model) is proposed, which is different from the traditional QPS model (where the multiple quasi-parabolic segment ionospheric profile model uses quasi-parabolic or anti-parabolic models to represent E, valley, and F1 and F2 layers). In other words, the electron density height profile of each layer in the ionosphere is no longer described by a single QP model. Still, it is based on QP as the basic unit and characterized by a combination of multiple QP units, and the entire vertical ionospheric profile consists of a series of QP unit models. Moreover, in the case of the multivariate QP model, determining the parameters of each layer becomes more complex. Based on this model, the inversion of vertical ionograms was achieved. We basically reproduced the Niu et al. paper _A profile inversion method for vertical ionograms_, but offering a working-opensource code and improved upon the mathematics used since in the original paper the results seem a bit dubious. 
+A recent article [AIP Advances 14, 065034 (2024)]
+claims to have developed a quasi-parabolic
+inspired approach to find the plasma frequency profile from a given ionogram. The authors claim
+their algorithm fits the desired ionogram by producing an artificial plasma frequency profile. We
+find the paper’s results rather dubious because of the mathematical treatment and numerical values presented.
+However, considering the potential of the underlying idea, we present a much clearer exposition of a
+multi-quasi-parabolic construction of a plasma frequency profile for the E and F layers given a daylight ionogram. A parabolic profile is assumed for the E layer and the F layer is approximated by a series of concatenated quasiparabolic layers where the continuity of the curve is preserved by assuming a common point between consecutive quasi-parabolic layers where the derivative is the same. The inversion algorithm was applied to daylight ionograms from the Jicamarca Observatory in Lima showing good agreement between the produced synthetic ionogram, calculated from our predicted plasma frequency profile, and the original measured ionogram. 
 
-Refer to the accompanying <a href="Documentation.pdf">PDF documentation</a> for detailed information on the mathematics and algorithms used.
+Refer to the accompanying <a href="Documentation.pdf">paper/documentation pdf</a> for a more detailed description of the mathematics and algorithms used.
 ## Results
 We used data provided by the Jicamarca Radio Observatory located in Lima, Peru. The data is a .SAO file thus providing all the information of the iongram such as the E and F layer critical frequency and the o-mode trace. We find that the program works for ionograms with E and F layer or daytime ionograms.
 
