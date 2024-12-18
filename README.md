@@ -7,15 +7,9 @@
 </div>
 
 ## Abstract
-A recent article [AIP Advances 14, 065034 (2024)]
-claims to have developed a quasi-parabolic
-inspired approach to find the plasma frequency profile from a given ionogram. The authors claim
-their algorithm fits the desired ionogram by producing an artificial plasma frequency profile. We
-find the paper’s results rather dubious because of the mathematical treatment and numerical values presented.
-However, considering the potential of the underlying idea, we present a much clearer exposition of a
-multi-quasi-parabolic construction of a plasma frequency profile for the E and F layers given a daylight ionogram. A parabolic profile is assumed for the E layer and the F layer is approximated by a series of concatenated quasiparabolic layers where the continuity of the curve is preserved by assuming a common point between consecutive quasi-parabolic layers where the derivative is the same. The inversion algorithm was applied to daylight ionograms from the Jicamarca Observatory in Lima showing good agreement between the produced synthetic ionogram, calculated from our predicted plasma frequency profile, and the original measured ionogram. 
+Building upon the concept of utilizing quasi-parabolic approximations to determine plasma frequency profiles from ionograms, we present a refined multi-quasi-parabolic method for modeling the E and F layers. While a recent study AIP Advances 14 065034 introduced an approach in this direction, we identified several inaccuracies in its mathematical treatment and numerical results. By addressing these issues, we offer a clearer exposition and a more robust algorithm. Our method assumes a parabolic profile for the E layer and approximates the F layer with a series of concatenated quasi-parabolic segments, ensuring continuity and smoothness by matching derivatives at the junctions. Applied to daylight ionograms from the Jicamarca Observatory in Lima, our inversion algorithm demonstrates excellent agreement between the synthetic ionograms generated from our predicted plasma frequency profiles and the original measured data.
 
-Refer to the accompanying <a href="Documentation.pdf">paper/documentation pdf</a> for a more detailed description of the mathematics and algorithms used.
+Refer to the accompanying [paper](https://arxiv.org/abs/2411.09215) for a more detailed description of the mathematics and algorithms used.
 ## Results
 We used data provided by the Jicamarca Radio Observatory located in Lima, Peru. The data is a .SAO file thus providing all the information of the iongram such as the E and F layer critical frequency and the o-mode trace. We find that the program works for ionograms with E and F layer or daytime ionograms.
 
